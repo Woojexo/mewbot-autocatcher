@@ -1,0 +1,15 @@
+{
+    "autocatch": false,
+    "spam": false,
+    "botlogs": true,
+    "debuglogs": true,
+    "whitelistenabled": false,
+    "blacklistenabled": false,
+    "token1": "",
+    "token3": "",
+    "token2": "",
+    "servers": {},
+    "blacklist": [],
+    "whitelist": [],
+    "spaminterval": 5000
+}
