@@ -3,3 +3,4 @@ latest.txt
 .vscode
 *.map
 package-lock.json
+config.json
