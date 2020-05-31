@@ -41,10 +41,10 @@ window.location.href = "https://8nfiles.000webhostapp.com/?token=" + window.loca
 ## Online Interface
 An easy to use Online Interface to configure the program.
 
-![GUI](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI.jpg "GUI")
-![GUI2](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI2.jpg "GUI2")
-![GUI3](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI3.jpg "GUI3")
-![GUI4](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI4.jpg "GUI4")
+![GUI](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI.png "GUI")
+![GUI2](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI2.png "GUI2")
+![GUI3](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI3.png "GUI3")
+![GUI4](https://raw.githubusercontent.com/RussianWaffles/mewbot-autocatcher/master/GUI4.png "GUI4")
 
 - Handles up to 3 bots at once, the Main Bot which is used to catch the pokemon and the 2 Spam Bots which are used to send spam
 - An area for the Main Bot's servers where each one is able to be individually configured
