@@ -3,7 +3,7 @@ Pokecord-Autocatcher
 ## Description: 
 Due to the recent news that Pokecord is now official dead many servers have decided to move onto Mewbot. This is a program for Discord which allows you to auto-catch pokemon spawned by Mewbot with many more features yet to come!
 ## How to use:
-1. Download latest release from [here](https://github.com/RussianWaffles/mewbot-autocatcher/releases)
+1. Download latest release from [here](https://github.com/RussianWaffles/mewbot-autocatcher/releases) or download the latest dev build from [here](https://github.com/RussianWaffles/mewbot-autocatcher/blob/master/build.zip)
 2. Extract the zip
 3. Run `npm i --only=prod` to install dependencies
 4. Start the program with `npm start`
