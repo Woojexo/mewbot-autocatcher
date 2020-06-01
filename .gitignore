@@ -3,3 +3,4 @@ node_modules
 *.map
 package-lock.json
 config.json
+config_default.json
