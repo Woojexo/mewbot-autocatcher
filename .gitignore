@@ -1,5 +1,4 @@
 node_modules
-latest.txt
 .vscode
 *.map
 package-lock.json
