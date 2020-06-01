@@ -25,6 +25,7 @@ var bot2data;
 var bot3data;
 var commandready = false;
 var pause = false;
+var authenticatedsockets = [];
 
 var botlogs = [];
 var debuglogs = [];
@@ -39,8 +40,18 @@ var averagerecognitiontime = 0;
 io.on('connect', async (socket) => {
     debug('Backend', 'Connection Initialised from ' + socket.id);
 
+    if(!config.authenticationenabled || !fs.existsSync('./build')){
+        authenticatedsockets.push(socket.id);
+    }else{
+        
+    }
+
     socket.on('init', callback => {
-        debug(socket.id, 'Config Request');
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+
+        debug(socket.id, 'Init Request');
         if(bot1){
             var serverjson = config.servers;
             for(var guild of bot1.guilds.array()){
@@ -55,6 +66,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('configupdate', (value, data, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, 'Config Update');
         config[value] = data;
         fs.writeFileSync('config.json', JSON.stringify(config));
@@ -62,6 +77,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('dataping', callback => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         callback({
             status: 'success',
             message: 'OK',
@@ -86,11 +105,19 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('debug', (identification, message, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(identification, message);
         callback({status: 'success', message: 'OK', data: {}});
     });
 
     socket.on('serverconfig', (id, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, 'Server Config Request');
         var json = config.servers[id];
         var autocatch = json ? json.autocatch : false;
@@ -103,6 +130,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('serverconfigupdate', (id, newconfig, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, 'Server Config Update');
         config.servers[id] = newconfig;
         if(newconfig.autocatch || newconfig.spam) servers[id].active = true;
@@ -114,10 +145,18 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('login', async (token, configvalue, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         login(token, configvalue, callback);
     });
 
     socket.on('tradepokemon', async (bot, channelid, type, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, bot + ' Pokemon Trade Request');
         var discordbot = bot == 'bot1' ? bot1 : bot == 'bot2' ? bot2 : bot3;
         var channel, prefix;
@@ -172,6 +211,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('transfercredits', async (bot, channelid, amount, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, bot + ' Credits Trade Request');
         var discordbot = bot == 'bot1' ? bot1 : bot == 'bot2' ? bot2 : bot3;
         var channel, prefix;
@@ -218,6 +261,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('sendmessage', (bot, channel, message, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, bot + ' Message Send Request');
         var discordbot = bot == 'bot1' ? bot1 : bot == 'bot2' ? bot2 : bot3;
         try{
@@ -230,6 +277,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('setstatus', (bot, status, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, bot + ' Status Change Request');
         var discordbot = (bot == 'bot1') ? bot1 : (bot == 'bot2') ? bot2 : bot3;
         discordbot.user.setStatus(status);
@@ -237,6 +288,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('setavatar', async (bot, avatar, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, bot + ' Avatar Change Request');
         var discordbot = (bot == 'bot1') ? bot1 : (bot == 'bot2') ? bot2 : bot3;
         try{
@@ -252,6 +307,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('logout', (bot, configvalue, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         debug(socket.id, bot + ' Logout Request');
         if(bot == 'bot1'){
             bot1.destroy();
@@ -274,6 +333,10 @@ io.on('connect', async (socket) => {
     });
 
     socket.on('listupdate', (pokemon, list, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
         if(list == 'whitelist'){
             if(config.whitelist.includes(pokemon)){
                 config.whitelist.splice(config.whitelist.indexOf(pokemon), 1);
@@ -453,17 +516,17 @@ server.listen(3001, async () => {
     if(config.token1 == ""){
         bot1data = {username: 'No User#0000', avatar: 'https://www.torrevieja.org.uk/ext/dark1/memberavatarstatus/image/avatar.png'};
     }else{
-        login(config.token1, 'token1')
+        // login(config.token1, 'token1')
     }
     if(config.token2 == ""){
         bot2data = {username: 'No User#0000', avatar: 'https://www.torrevieja.org.uk/ext/dark1/memberavatarstatus/image/avatar.png'};
     }else{
-        login(config.token2, 'token2')
+        // login(config.token2, 'token2')
     }
     if(config.token3 == ""){
         bot3data = {username: 'No User#0000', avatar: 'https://www.torrevieja.org.uk/ext/dark1/memberavatarstatus/image/avatar.png'};
     }else{
-        login(config.token3, 'token3')
+        // login(config.token3, 'token3')
     }
 
     setInterval(() => {
@@ -524,6 +587,10 @@ if(fs.existsSync('./build')){
         }else{
             next();
         }
+    });
+    app.get('/auth', (req, res) => {
+        authenticatedsockets.push(req.query.socket);
+        res.send('OK');
     });
     app.use('/', express.static('./build'));
 }

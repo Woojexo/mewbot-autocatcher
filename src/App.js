@@ -64,10 +64,14 @@ class App extends Component{
         }
 
         this.websocket.once('connect', () => {
-            this.websocket.emit('init', response => {
-
-                this.setState({config: response.data.config, whitelist: response.data.whitelist, blacklist: response.data.blacklist}, () => {this.ping()});
-            });
+            var xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                this.websocket.emit('init', response => {
+                    this.setState({config: response.data.config, whitelist: response.data.whitelist, blacklist: response.data.blacklist}, () => {this.ping()});
+                });
+            }
+            xhr.open('GET', '/auth?socket=' + this.websocket.id);
+            xhr.send();
         });
 
         this.websocket.on('error', error => {
