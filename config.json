@@ -5,13 +5,13 @@
     "debuglogs": true,
     "whitelistenabled": false,
     "blacklistenabled": false,
-	"authenticationenabled": false,
+    "authenticationenabled": false,
     "token1": "",
     "token3": "",
     "token2": "",
     "servers": {},
     "blacklist": [],
     "whitelist": [],
-	"authentication": {"": ""},
+    "authentication": {"": ""},
     "spaminterval": 5000
 }
