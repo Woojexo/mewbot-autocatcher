@@ -12,6 +12,6 @@
     "servers": {},
     "blacklist": [],
     "whitelist": [],
-    "authentication": {"": ""},
+    "authentication": {"username": "", "password": ""}
     "spaminterval": 5000
 }
