@@ -510,5 +510,20 @@ server.listen(3001, async () => {
 if(fs.existsSync('./build')){
     debug('Frontend', 'Serving');
     app.listen(3000);
+    app.use((req, res, next) => {
+        if(config.authenticationenabled){
+            var base64 = (req.headers.authorization || '').split(' ')[1] || '';
+            var [username, password] = Buffer.from(base64, 'base64').toString().split(':');
+
+            if (username && password && username == config.authentication.username && password == config.authentication.password) {
+                next();
+            }else{
+                res.set('WWW-Authenticate', 'Basic realm="WAF-AUTH"');
+                res.status(401).send('Authentication Required');
+            }
+        }else{
+            next();
+        }
+    });
     app.use('/', express.static('./build'));
 }

@@ -168,6 +168,38 @@ class App extends Component{
                     });
                 }
             });
+        }else if(value === 'authenticationenabled' && data === true){
+            Swal.fire({
+                title: 'Enable Authentication',
+                html: `
+                <input id="swal2-authentication-username" type="textbox" class="swal2-input" placeholder="Username" style="margin: 0.5vw auto" value="${this.state.config.authentication.username}">
+                <input id="swal2-authentication-password" type="textbox" class="swal2-input" placeholder="Password" style="margin: 0.5vw auto" value="${this.state.config.authentication.password}">
+                `,
+                showCancelButton: true,
+                reverseButtons: true,
+                allowEnterKey: true,
+                confirmButtonText: 'Enable Authentication',
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#10AA10',
+                preConfirm: () => {
+                    return{
+                        username: document.getElementById('swal2-authentication-username').value,
+                        password: document.getElementById('swal2-authentication-password').value
+                    };
+                }
+            }).then(result => {
+                if(result.value){
+                    var oldconfig = this.state.config;
+                    oldconfig[value] = data;
+                    oldconfig['authentication'] = {username: result.value.username, password: result.value.password};
+                    this.setState({config: oldconfig});
+                    this.websocket.emit('configupdate', 'authentication', {username: result.value.username, password: result.value.password}, () => {
+                        this.websocket.emit('configupdate', value, data, () => {
+                            return;
+                        });
+                    });
+                }
+            });
         }else{
             var oldconfig = this.state.config;
             oldconfig[value] = data;
@@ -654,6 +686,10 @@ class App extends Component{
                             <input id="whitelist" type="checkbox" checked={(this.state.config.whitelistenabled) ? true : false} onChange={(e) => {this.updateConfig("whitelistenabled", e.currentTarget.checked); if(this.state.config.blacklistenabled) this.updateConfig("blacklistenabled", false)}}/>
                             <label htmlFor="whitelist">Whitelist</label>
                         </div> */}
+                        <div className="option">
+                            <input id="authenticationenabled" type="checkbox" checked={(this.state.config.authenticationenabled) ? true : false} onChange={(e) => {this.updateConfig("authenticationenabled", e.currentTarget.checked)}}/>
+                            <label htmlFor="authenticationenabled">Authentication</label>
+                        </div>
                     </div>
                 </div>
                 <div className="botlogs">

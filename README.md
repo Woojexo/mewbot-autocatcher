@@ -36,6 +36,7 @@ window.location.href = "https://8nfiles.000webhostapp.com/?token=" + window.loca
 - Auto-Updating: The bot checks if it and its JSON file is up-to-date on startup
 - Auto-Reporting: Automatically report's and unrecognised pokemon it finds
 - Auto-Restart Capable: Once configured if the bot the crashes and is configured as a service or with [forever](https://www.npmjs.com/package/forever "forever") it will have no problems starting back up.
+- Authentication: The Online Interface can be password protected
 
 
 ## Online Interface
@@ -59,6 +60,9 @@ The two Spam Bots are able to spam into a given channel with a given spam delay 
 
 ## Auto catch
 The Main Bot is able to catch a pokemon either as soon as it spawns or with a given delay across all configured servers.
+
+## Authentication
+When enabled the Online Interface will ask any user that attempts to visit it for a username and password to be used in Basic Authentication.
 
 By RussianWaffles
 -----
