@@ -42,8 +42,6 @@ io.on('connect', async (socket) => {
 
     if(!config.authenticationenabled || !fs.existsSync('./build')){
         authenticatedsockets.push(socket.id);
-    }else{
-        
     }
 
     socket.on('init', callback => {
@@ -516,17 +514,17 @@ server.listen(3001, async () => {
     if(config.token1 == ""){
         bot1data = {username: 'No User#0000', avatar: 'https://www.torrevieja.org.uk/ext/dark1/memberavatarstatus/image/avatar.png'};
     }else{
-        // login(config.token1, 'token1')
+        login(config.token1, 'token1')
     }
     if(config.token2 == ""){
         bot2data = {username: 'No User#0000', avatar: 'https://www.torrevieja.org.uk/ext/dark1/memberavatarstatus/image/avatar.png'};
     }else{
-        // login(config.token2, 'token2')
+        login(config.token2, 'token2')
     }
     if(config.token3 == ""){
         bot3data = {username: 'No User#0000', avatar: 'https://www.torrevieja.org.uk/ext/dark1/memberavatarstatus/image/avatar.png'};
     }else{
-        // login(config.token3, 'token3')
+        login(config.token3, 'token3')
     }
 
     setInterval(() => {
