@@ -33,7 +33,7 @@ var average = [];
 
 var pokemoncaught = 0;
 var unknownpokemon = 0;
-var version = '1.0.0';
+var version = '1.1.0';
 var uptime = new Date();
 var averagerecognitiontime = 0;
 
