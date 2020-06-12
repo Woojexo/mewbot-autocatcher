@@ -456,7 +456,7 @@ function login(token, configvalue, callback = null){
                         var serverconfig = config.servers[message.guild.id];
                         var end = new Date();
                         if(serverconfig && serverconfig.autocatch && config.autocatch){
-                            if(serverconfig && serverconfig.delay) await delay(json.delay * 1000);
+                            if(serverconfig && serverconfig.delay) await delay(config.delay * 1000);
                             // if(config.whitelistenabled){
                             //     if(config.whitelist.includes(pokemon)){
                             //         message.channel.send(pokemon).catch(err => {});
