@@ -32,8 +32,9 @@ var debuglogs = [];
 var average = [];
 
 var pokemoncaught = 0;
-var unknownpokemon = 0;
-var version = '1.2.0';
+var shinypokemoncaught = 0;
+// var unknownpokemon = 0;
+var version = '1.2.1';
 var uptime = new Date();
 var averagerecognitiontime = 0;
 
@@ -87,7 +88,8 @@ io.on('connect', async (socket) => {
                 debuglogs: debuglogs,
                 averagerecognitiontime: averagerecognitiontime,
                 pokemoncaught: pokemoncaught,
-                unknownpokemon: unknownpokemon,
+                shinypokemoncaught: shinypokemoncaught,
+                // unknownpokemon: unknownpokemon,
                 uptime: new Date() - uptime,
                 commandserverstatus: commandready ? "Connected" : "Not Connected",
                 jsonversion: (pause) ? 'Updating...' : pokedex.version,
@@ -489,6 +491,10 @@ function login(token, configvalue, callback = null){
                         if(average.length > 100) average.shift();
                     }else if(!embed.title && embed.description.includes(`<@${bot.user.id}>, you have caught a`)){
                         var match = embed.description.match(/caught a .*?!/)[0];
+                        if(match.includes('🌟')){
+                            shinypokemoncaught++;
+                            match = match.replace('🌟', 'Shiny ');
+                        }
                         botlogs.push(match.charAt(0).toUpperCase() + match.slice(1));
                         pokemoncaught++;
                     }
