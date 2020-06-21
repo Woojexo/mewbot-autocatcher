@@ -33,7 +33,7 @@ var average = [];
 
 var pokemoncaught = 0;
 var unknownpokemon = 0;
-var version = '1.1.1';
+var version = '1.2.0';
 var uptime = new Date();
 var averagerecognitiontime = 0;
 
@@ -82,24 +82,22 @@ io.on('connect', async (socket) => {
         callback({
             status: 'success',
             message: 'OK',
-                data: {
-                    botlogs: botlogs,
-                    debuglogs: debuglogs,
-                    averagerecognitiontime: averagerecognitiontime,
-                    pokemoncaught: pokemoncaught,
-                    unknownpokemon: unknownpokemon,
-                    uptime: new Date() - uptime,
-                    commandserverstatus: commandready ? "Connected" : "Not Connected",
-                    jsonversion: (pause) ? 'Updating...' : pokedex.version,
-                    botversion: version,
-                    bot1: bot1data,
-                    bot2: bot2data,
-                    bot3: bot3data,
-                    servers: servers,
-                }
-            });
-        debuglogs = [];
-        botlogs = [];
+            data: {
+                botlogs: botlogs,
+                debuglogs: debuglogs,
+                averagerecognitiontime: averagerecognitiontime,
+                pokemoncaught: pokemoncaught,
+                unknownpokemon: unknownpokemon,
+                uptime: new Date() - uptime,
+                commandserverstatus: commandready ? "Connected" : "Not Connected",
+                jsonversion: (pause) ? 'Updating...' : pokedex.version,
+                botversion: version,
+                bot1: bot1data,
+                bot2: bot2data,
+                bot3: bot3data,
+                servers: servers,
+            }
+        });
     });
 
     socket.on('debug', (identification, message, callback) => {
@@ -150,7 +148,7 @@ io.on('connect', async (socket) => {
         login(token, configvalue, callback);
     });
 
-    socket.on('tradepokemon', async (bot, channelid, type, callback) => {
+    socket.on('tradepokemon', async (bot, channelid, type, callback) => { //TODO: update for mewbot
         if(!authenticatedsockets.includes(socket.id)){
             return;
         }
@@ -208,12 +206,12 @@ io.on('connect', async (socket) => {
         callback({status: 'success', message: 'OK', data: {}});
     });
 
-    socket.on('transfercredits', async (bot, channelid, amount, callback) => {
+    socket.on('transferothers', async (bot, channelid, credits, redeems, callback) => {
         if(!authenticatedsockets.includes(socket.id)){
             return;
         }
         
-        debug(socket.id, bot + ' Credits Trade Request');
+        debug(socket.id, bot + ' Others Transfer Request');
         var discordbot = bot == 'bot1' ? bot1 : bot == 'bot2' ? bot2 : bot3;
         var channel, prefix;
 
@@ -229,33 +227,38 @@ io.on('connect', async (socket) => {
         }
         prefix = config.servers[channel.guild.id].prefix;
 
-        if(amount == 'all'){
-            await channel.send(prefix + 'bal');
-            amount = await new Promise(resolve => {
-                channel.awaitMessages(m => m.author.id == '365975655608745985', {max: 1, time: 10000, errors: ['time']}).then(collected => {
+        if(credits == 'all' || redeems == 'all'){
+            await channel.send(prefix + 'credits');
+            var values = await new Promise(resolve => {
+                channel.awaitMessages(m => m.author.id == '519850436899897346', {max: 1, time: 10000, errors: ['time']}).then(collected => {
                     var embed = collected.first().embeds[0];
-                    resolve(embed.description.split('have ')[1].split(' credits')[0].split(',').join(''));
+                    resolve([embed.fields[2].value.split('<')[0], embed.fields[0].value]);
                 }).catch(() => {
                     resolve('');
                 });
             });
 
-            if(amount == ''){
-                callback({status: 'failure', message: "Couldn't get balance, check the channel", data: {}});
+            if(values[0] == '' || values[1] == ''){
+                callback({status: 'failure', message: "Couldn't get others, check the channel", data: {}});
+                channel.send(prefix + 'reject');
                 return;
-            }else if(amount == '0'){
-                callback({status: 'failure', message: 'No credits to transfer', data: {}});
-                channel.send(prefix + 'deny');
+            }else if(values[0] == '0' || values[1] == '0'){
+                callback({status: 'failure', message: 'No others to transfer', data: {}});
+                channel.send(prefix + 'reject');
                 return;
+            }else{
+                credits = values[0];
+                redeems = values[1];
             }
-            await delay(2000);
         }
         await channel.send(prefix + 'accept');
-        await delay(2000);
-        await channel.send(prefix + 'c add ' + amount);
-        await delay(3500);
+        await delay(1500);
+        await channel.send(prefix + 'add c ' + credits);
+        await delay(500);
+        await channel.send(prefix + 'add r ' + redeems);
+        await delay(500);
         await channel.send(prefix + 'confirm');
-        callback({status: 'success', message: amount, data: {}});
+        callback({status: 'success', message: '', data: {}});
     });
 
     socket.on('sendmessage', (bot, channel, message, callback) => {
@@ -392,7 +395,6 @@ commandserver.on('debug', (identification, message, callback) => {
 function debug(identification, message){
     console.log(`[${identification}] ${message}`);
     debuglogs.push(`[${identification}] ${message}`);
-    if(debuglogs.length > 100) debuglogs.shift();
 }
 
 function login(token, configvalue, callback = null){
@@ -443,20 +445,29 @@ function login(token, configvalue, callback = null){
                     var embed = message.embeds[0];
                     if(embed && embed.title && embed.title.includes('wild Pokémon') && !pause){
                         var start = new Date();
-                        var response = await axios.get(embed.image.url, {responseType: 'arraybuffer'});
-                        var hash = await imageHash(Buffer.from(response.data, 'utf-8'));
-                        var pokemon = pokedex[hash];
+                        var pokemon = embed.image.url.match(/image\?pokemon=(.*)-.png/)[1];
+                        var form = pokemon.split('-')[1];
 
-                        if(pokemon == undefined){
-                            debug('bot1', 'Unknown Pokemon: ' + embed.image.url + ' - ' + hash);
-                            unknownpokemon++;   
-                            if(commandready) commandserver.emit('unrecognisedpokemon', embed.image.url, hash, () => {});
-                        }
+                        pokemon = pokemon.split('/').length != 1 ? pokemon.split('/')[1].split('-')[0] : pokemon = pokemon.split('-')[0];
+                        pokemon = pokedex[pokemon];
+                        if(form == 1) pokemon += ' alola';
+
+                        //keep for possible future use
+                        // var hash = await imageHash(Buffer.from(response.data, 'utf-8'));
+                        // var pokemon = pokedex[hash];
+
+                        // if(pokemon == undefined){
+                        //     debug('bot1', 'Unknown Pokemon: ' + embed.image.url + ' - ' + hash);
+                        //     unknownpokemon++;   
+                        //     if(commandready) commandserver.emit('unrecognisedpokemon', embed.image.url, hash, () => {});
+                        // }
 
                         var serverconfig = config.servers[message.guild.id];
                         var end = new Date();
                         if(serverconfig && serverconfig.autocatch && config.autocatch){
                             if(serverconfig && serverconfig.delay) await delay(config.delay * 1000);
+                            //TODO: whitelist/blacklist
+                            
                             // if(config.whitelistenabled){
                             //     if(config.whitelist.includes(pokemon)){
                             //         message.channel.send(pokemon).catch(err => {});
@@ -479,7 +490,6 @@ function login(token, configvalue, callback = null){
                     }else if(!embed.title && embed.description.includes(`<@${bot.user.id}>, you have caught a`)){
                         var match = embed.description.match(/caught a .*?!/)[0];
                         botlogs.push(match.charAt(0).toUpperCase() + match.slice(1));
-                        if(botlogs.length > 100) botlogs.shift();
                         pokemoncaught++;
                     }
                 }
@@ -490,6 +500,7 @@ function login(token, configvalue, callback = null){
 
 function getWhitelist(){
     var whitelist = {};
+    //TODO: whitelist
     // for(var pokemon of pokemonlist){
     //     pokemon = pokemon.replace('.png', '');
     //     if(pokemon == 'Type Null') pokemon = 'Type: Null';
@@ -500,6 +511,7 @@ function getWhitelist(){
 
 function getBlacklist(){
     var blacklist = {};
+    //TODO: blacklist
     // for(var pokemon of pokemonlist){
     //     pokemon = pokemon.replace('.png', '');
     //     if(pokemon == 'Type Null') pokemon = 'Type: Null';

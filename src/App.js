@@ -116,20 +116,15 @@ class App extends Component{
                 if(!server.icon) server.icon = this.serverIcon(server.acronym);
                 newstate.servers[id] = server;
             }
-
-            if(result.data.botlogs.length !== 0){
-                result.data.botlogs.forEach(log => {
-                    if(this.state.config.botlogs) newstate.botlogs.push(log);
-                });
+            if(result.data.botlogs.length - this.state.botlogs.length > 0){
+                if(this.state.config.botlogs) newstate.botlogs = result.data.botlogs;
             }
-            if(result.data.debuglogs.length !== 0){
-                result.data.debuglogs.forEach(log => {
-                    if(this.state.config.debuglogs) newstate.debuglogs.push(log);
-                });
+            if(result.data.debuglogs.length - this.state.debuglogs.length > 0){
+                if(this.state.config.debuglogs) newstate.debuglogs = result.data.debuglogs;
             }
 
             if(result.data.botlogs.length !== 0 || result.data.debuglogs.length !== 0) {
-                this.setState({newstate});
+                this.setState(newstate);
                 var parent = document.getElementsByClassName('debuglogs')[0].lastChild.firstChild.firstChild;
                 parent.scrollTop = parent.scrollHeight;
                 parent = document.getElementsByClassName('botlogs')[0].lastChild.firstChild.firstChild;
@@ -335,8 +330,7 @@ class App extends Component{
                 cancelButtonColor: '#d33',
                 confirmButtonColor: '#10AA10',
                 input: 'select',
-                // inputOptions: ['Send Message', 'Change Status', 'Change Avatar', 'Trade Pokemon', 'Trade Credits', 'Logout']
-                inputOptions: ['Send Message', 'Change Status', 'Change Avatar', 'Logout']
+                inputOptions: ['Send Message', 'Change Status', 'Change Avatar', 'Trade Others', 'Logout']
             }).then(result => {
                 if(result.value){
                     if(result.value === "0"){
@@ -501,63 +495,67 @@ class App extends Component{
                     //             });
                     //         }
                     //     });
-                    // }else if(result.value === "4"){
-                    //     Swal.fire({
-                    //         title: 'Trade Credits',
-                    //         html:
-                    //         `
-                    //         Make sure you have sent the bot a trade request
-                    //         <input id="swal2-transfercredits-amount" type="textbox" class="swal2-input" placeholder="Amount(Leave blank for all)" style="margin: 0.5vw auto">
-                    //         <input id="swal2-transfercredits-channel" type="textbox" class="swal2-input" placeholder="Channel ID" style="margin: 0.5vw auto">
-                    //         `,
-                    //         showCancelButton: true,
-                    //         reverseButtons: true,
-                    //         allowEnterKey: true,
-                    //         confirmButtonText: 'Trade',
-                    //         cancelButtonColor: '#d33',
-                    //         confirmButtonColor: '#10AA10',
-                    //         preConfirm: () => {
-                    //             return{
-                    //                 amount: (document.getElementById('swal2-transfercredits-amount').value === "") ? "all" : document.getElementById('swal2-transfercredits-amount').value,
-                    //                 channel: document.getElementById('swal2-transfercredits-channel').value,
-                    //             };
-                    //         }
-                    //     }).then(result => {
-                    //         if(result.value){
-                    //             var failed = "";
-                    //             if(isNaN(result.value.amount) && result.value.amount !== "all") failed += "Amount must be a number<br>";
-                    //             if(parseInt(result.value.amount) <= 0 && result.value.amount !== "all") failed += "Amount must be a number above 0<br>";
-                    //             if(result.value.channel.length !== 18) failed += "Channel ID must be 18 characters<br>";
-                    //             if(failed !== ""){
-                    //                 Swal.fire({
-                    //                     title: 'Error',
-                    //                     html: failed,
-                    //                     icon: 'error',
-                    //                     allowEnterKey: true
-                    //                 });
-                    //             }else{
-                    //                 this.websocket.emit('transfercredits', statevalue, result.value.channel, result.value.amount, callback => {
-                    //                     if(callback.status === 'success'){
-                    //                         Swal.fire({
-                    //                             title: 'Success',
-                    //                             html: 'Credits Transferred!',
-                    //                             icon: 'success',
-                    //                             allowEnterKey: true
-                    //                         });
-                    //                     }else{
-                    //                         Swal.fire({
-                    //                             title: 'Error',
-                    //                             html: callback.message,
-                    //                             icon: 'error',
-                    //                             allowEnterKey: true
-                    //                         });
-                    //                     }
-                    //                 });
-                    //             }
-                    //         }
-                    //     });
-                    // }else if(result.value === "5"){
                     }else if(result.value === "3"){
+                        Swal.fire({
+                            title: 'Transfer Others',
+                            html:
+                            `
+                            Make sure you have sent the bot a trade request
+                            <input id="swal2-transferothers-credits" type="textbox" class="swal2-input" placeholder="Credits Amount(Leave blank for all)" style="margin: 0.5vw auto">
+                            <input id="swal2-transferothers-redeems" type="textbox" class="swal2-input" placeholder="Redeems Amount(Leave blank for all)" style="margin: 0.5vw auto">
+                            <input id="swal2-transferothers-channel" type="textbox" class="swal2-input" placeholder="Channel ID" style="margin: 0.5vw auto">
+                            `,
+                            showCancelButton: true,
+                            reverseButtons: true,
+                            allowEnterKey: true,
+                            confirmButtonText: 'Trade',
+                            cancelButtonColor: '#d33',
+                            confirmButtonColor: '#10AA10',
+                            preConfirm: () => {
+                                return{
+                                    credits: (document.getElementById('swal2-transferothers-credits').value === "") ? "all" : document.getElementById('swal2-transferothers-credits').value,
+                                    redeems: (document.getElementById('swal2-transferothers-redeems').value === "") ? "all" : document.getElementById('swal2-transferothers-redeems').value,
+                                    channel: document.getElementById('swal2-transferothers-channel').value,
+                                };
+                            }
+                        }).then(result => {
+                            if(result.value){
+                                var failed = "";
+                                if(isNaN(result.value.credits) && result.value.credits !== "all") failed += "Credits Amount must be a number<br>";
+                                if(isNaN(result.value.redeems) && result.value.redeems !== "all") failed += "Redeems Amount must be a number<br>";
+                                if(parseInt(result.value.credits) <= 0 && result.value.credits !== "all") failed += "Credits Amount must be a number above 0<br>";
+                                if(parseInt(result.value.redeems) <= 0 && result.value.redeems !== "all") failed += "Redeems Amount must be a number above 0<br>";
+                                if(result.value.channel.length !== 18) failed += "Channel ID must be 18 characters<br>";
+                                if(failed !== ""){
+                                    Swal.fire({
+                                        title: 'Error',
+                                        html: failed,
+                                        icon: 'error',
+                                        allowEnterKey: true
+                                    });
+                                }else{
+                                    this.websocket.emit('transferothers', statevalue, result.value.channel, result.value.credits, result.value.redeems, callback => {
+                                        if(callback.status === 'success'){
+                                            Swal.fire({
+                                                title: 'Success',
+                                                html: 'Others Transferred!',
+                                                icon: 'success',
+                                                allowEnterKey: true
+                                            });
+                                        }else{
+                                            Swal.fire({
+                                                title: 'Error',
+                                                html: callback.message,
+                                                icon: 'error',
+                                                allowEnterKey: true
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    // }else if(result.value === "5"){
+                    }else if(result.value === "4"){
                         Swal.fire({
                             title: 'Are you sure?',
                             showCancelButton: true,
