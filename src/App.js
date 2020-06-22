@@ -644,7 +644,7 @@ class App extends Component{
     loaded(){
         return(
             <div className="App">
-                <center><h1 style={{margin: '0px'}}>Mewbot Autocatcher - By RussianWaffles</h1></center>
+                <center><h1 style={{margin: '0px', color: this.state.config.colorscheme.maintext}}>Mewbot Autocatcher - By RussianWaffles</h1></center>
                 <div className="bots">
                     <center><h2>Bots</h2></center>
                     <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
@@ -681,7 +681,7 @@ class App extends Component{
                     </div>
                 </div>
                 <div className="servers">
-                    <center><h2>Servers</h2></center>
+                    <center><h2 style={{color: this.state.config.colorscheme.maintext}}>Servers</h2></center>
                     <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
                         <CustomScrollbars>
                         {!this.state.servers ? <></> : Object.values(this.state.servers).map(server =>
@@ -694,7 +694,7 @@ class App extends Component{
                     </div>
                 </div>
                 <div className="options">
-                    <center><h2>Options</h2></center>
+                    <center><h2 style={{color: this.state.config.colorscheme.maintext}}>Options</h2></center>
                     <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
                         <div className="option">
                             <input id="autocatch" type="checkbox" checked={(this.state.config.autocatch) ? true : false} onChange={(e) => {this.updateConfig("autocatch", e.currentTarget.checked)}}/>
@@ -727,7 +727,7 @@ class App extends Component{
                     </div>
                 </div>
                 <div className="botlogs">
-                    <center><h2>Bot Logs</h2></center>
+                    <center><h2 style={{color: this.state.config.colorscheme.maintext}}>Bot Logs</h2></center>
                     <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground}}>
                         <CustomScrollbars>
                             {!this.state.botlogs ? <></> : this.state.botlogs.map((log, index) => (
@@ -739,7 +739,7 @@ class App extends Component{
                     </div>
                 </div>
                 <div className="debuglogs">
-                    <center><h2>Debug Logs</h2></center>
+                    <center><h2 style={{color: this.state.config.colorscheme.maintext}}>Debug Logs</h2></center>
                     <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground}}>
                         <CustomScrollbars>
                             {!this.state.debuglogs ? <></> : this.state.debuglogs.map((log, index) => (
@@ -751,7 +751,7 @@ class App extends Component{
                     </div>
                 </div>
                 <div className="stats">
-                    <center><h2>Statistics</h2></center>
+                    <center><h2 style={{color: this.state.config.colorscheme.maintext}}>Statistics</h2></center>
                     <div className="frame"  style={{color: this.state.config.colorscheme.frametext, fontFamily: 'caviar_dreamsregular', backgroundColor: this.state.config.colorscheme.framebackground}}>
                         {/* Average Recognition Time: {this.state.averagerecognitiontime + 'ms'} */}
                         {/* <br/> */}
@@ -801,7 +801,7 @@ class App extends Component{
                     </div>
                 </div> */}
                 <div className="colorscheme">
-                    <center><h2>Color Scheme</h2></center>
+                    <center><h2 style={{color: this.state.config.colorscheme.maintext}}>Color Scheme</h2></center>
                     <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
                         <div class="color">
                             <div class="viewcolor" style={{backgroundColor: this.state.config.colorscheme.mainbackground}} onClick={(e) => {this.chooseColor('mainbackground')}}></div>
