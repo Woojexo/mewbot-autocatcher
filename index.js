@@ -34,7 +34,7 @@ var average = [];
 var pokemoncaught = 0;
 var shinypokemoncaught = 0;
 // var unknownpokemon = 0;
-var version = '1.2.1';
+var version = '1.2.2';
 var uptime = new Date();
 var averagerecognitiontime = 0;
 
@@ -355,6 +355,17 @@ io.on('connect', async (socket) => {
         }
         fs.writeFileSync('config.json', JSON.stringify(config));
         callback({status: 'success', message: 'OK', data: (list == 'whitelist') ? getWhitelist() : getBlacklist()});
+    });
+
+    socket.on('colorchange', (statevalue, color, callback) => {
+        if(!authenticatedsockets.includes(socket.id)){
+            return;
+        }
+        
+        debug(socket.id, 'Color Change Request');
+        config.colorscheme[statevalue] = color;
+        fs.writeFileSync('config.json', JSON.stringify(config));
+        callback({status: 'success', message: 'OK', data: {}});
     });
 });
 

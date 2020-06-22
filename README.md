@@ -50,8 +50,8 @@ An easy to use Online Interface to configure the program.
 - Handles up to 3 bots at once, the Main Bot which is used to catch the pokemon and the 2 Spam Bots which are used to send spam
 - An area for the Main Bot's servers where each one is able to be individually configured
 - The main options for the program
-- Bot Logs where any caught pokemon are displayed(up to 100 logs are displayed)
-- Debug Logs where logs for debugging are displayed(up to 100 logs are displayed)
+- Bot Logs where any caught pokemon are displayed
+- Debug Logs where logs for debugging are displayed
 - Statistics to quickly check the program
 
 

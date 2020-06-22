@@ -69,6 +69,7 @@ class App extends Component{
             xhr.onload = () => {
                 this.websocket.emit('init', response => {
                     this.setState({config: response.data.config, whitelist: response.data.whitelist, blacklist: response.data.blacklist}, () => {this.ping()});
+                    document.body.style.backgroundColor = response.data.config.colorscheme.mainbackground;
                 });
             }
             xhr.open('GET', '/auth?socket=' + this.websocket.id);
@@ -125,7 +126,7 @@ class App extends Component{
                 if(this.state.config.debuglogs) newstate.debuglogs = result.data.debuglogs;
             }
 
-            if(result.data.botlogs.length !== 0 || result.data.debuglogs.length !== 0) {
+            if(result.data.botlogs.length - this.state.botlogs.length !== 0 || result.data.debuglogs.length - this.state.debuglogs.length !== 0) {
                 this.setState(newstate);
                 var parent = document.getElementsByClassName('debuglogs')[0].lastChild.firstChild.firstChild;
                 parent.scrollTop = parent.scrollHeight;
@@ -596,7 +597,7 @@ class App extends Component{
         canvas.height = 128;
         var editablecanvas = canvas.getContext('2d');
         editablecanvas.font = '50px caviar_dreamsregular';
-        editablecanvas.fillStyle = '#fff';
+        editablecanvas.fillStyle = this.state.config.colorscheme.frametext;
         editablecanvas.textAlign = 'center';
         editablecanvas.textBaseline = 'middle';
         editablecanvas.fillText(acronym, 64, 64);
@@ -611,13 +612,42 @@ class App extends Component{
         });
     }
 
+    chooseColor(statevalue){
+        Swal.fire({
+            title: 'Change Color',
+            input: 'text',
+            showCancelButton: true,
+            reverseButtons: true,
+            allowEnterKey: true,
+            confirmButtonText: 'Change',
+            cancelButtonColor: '#d33',
+            confirmButtonColor: '#10AA10',
+            inputValidator: input => {
+                if(!input.startsWith('#')) return 'Hex color must start with a #'
+                if(input.length !== 7) return 'Hex color must be 7 characters long'
+            }
+        }).then(result => {
+            if(result.value){
+                this.websocket.emit('colorchange', statevalue, result.value, response => {
+                    if(statevalue === 'mainbackground'){
+                        document.body.style.backgroundColor = result.value;
+                    }
+                    
+                    var newstate = {config: this.state.config};
+                    newstate.config.colorscheme[statevalue] = result.value;
+                    this.setState(newstate);
+                });
+            }
+        });
+    }
+
     loaded(){
         return(
             <div className="App">
-                <center><h1 className="test">Mewbot Autocatcher - By RussianWaffles</h1></center>
+                <center><h1 style={{margin: '0px'}}>Mewbot Autocatcher - By RussianWaffles</h1></center>
                 <div className="bots">
                     <center><h2>Bots</h2></center>
-                    <div className="frame">
+                    <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
                         {!this.state.bot1 ? <div className="bot">{this.loading('fff')}</div> : (
                             <div className="bot">
                                 <div className="avatar">
@@ -652,7 +682,7 @@ class App extends Component{
                 </div>
                 <div className="servers">
                     <center><h2>Servers</h2></center>
-                    <div className="frame">
+                    <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
                         <CustomScrollbars>
                         {!this.state.servers ? <></> : Object.values(this.state.servers).map(server =>
                             <div className="server" key={server.id} onClick={() => {this.websocket.emit('serverconfig', server.id, result => {this.updateServer(result.data)})}}>
@@ -665,7 +695,7 @@ class App extends Component{
                 </div>
                 <div className="options">
                     <center><h2>Options</h2></center>
-                    <div className="frame">
+                    <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
                         <div className="option">
                             <input id="autocatch" type="checkbox" checked={(this.state.config.autocatch) ? true : false} onChange={(e) => {this.updateConfig("autocatch", e.currentTarget.checked)}}/>
                             <label htmlFor="autocatch">Autocatch</label>
@@ -698,10 +728,10 @@ class App extends Component{
                 </div>
                 <div className="botlogs">
                     <center><h2>Bot Logs</h2></center>
-                    <div className="frame">
+                    <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground}}>
                         <CustomScrollbars>
                             {!this.state.botlogs ? <></> : this.state.botlogs.map((log, index) => (
-                                <div className="log" key={index}>
+                                <div className="log" key={index} style={{color: this.state.config.colorscheme.frametext}}>
                                     <p>{log}</p>
                                 </div>
                             ))}
@@ -710,10 +740,10 @@ class App extends Component{
                 </div>
                 <div className="debuglogs">
                     <center><h2>Debug Logs</h2></center>
-                    <div className="frame">
+                    <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground}}>
                         <CustomScrollbars>
                             {!this.state.debuglogs ? <></> : this.state.debuglogs.map((log, index) => (
-                                <div className="log" key={index}>
+                                <div className="log" key={index} style={{color: this.state.config.colorscheme.frametext}}>
                                     <p>{log}</p>
                                 </div>
                             ))}
@@ -722,7 +752,7 @@ class App extends Component{
                 </div>
                 <div className="stats">
                     <center><h2>Statistics</h2></center>
-                    <div className="frame" style={{color: 'white', fontFamily: 'caviar_dreamsregular'}}>
+                    <div className="frame"  style={{color: this.state.config.colorscheme.frametext, fontFamily: 'caviar_dreamsregular', backgroundColor: this.state.config.colorscheme.framebackground}}>
                         {/* Average Recognition Time: {this.state.averagerecognitiontime + 'ms'} */}
                         {/* <br/> */}
                         Pokemon Caught: {this.state.pokemoncaught}
@@ -770,6 +800,27 @@ class App extends Component{
                         </CustomScrollbars>
                     </div>
                 </div> */}
+                <div className="colorscheme">
+                    <center><h2>Color Scheme</h2></center>
+                    <div className="frame" style={{backgroundColor: this.state.config.colorscheme.framebackground, color: this.state.config.colorscheme.frametext}}>
+                        <div class="color">
+                            <div class="viewcolor" style={{backgroundColor: this.state.config.colorscheme.mainbackground}} onClick={(e) => {this.chooseColor('mainbackground')}}></div>
+                            <div class="hexcolor">{this.state.config.colorscheme.mainbackground} - Main Background</div>
+                        </div>
+                        <div class="color">
+                            <div class="viewcolor" style={{backgroundColor: this.state.config.colorscheme.framebackground}} onClick={(e) => {this.chooseColor('framebackground')}}></div>
+                            <div class="hexcolor">{this.state.config.colorscheme.framebackground} - Frame Background</div>
+                        </div>
+                        <div class="color">
+                            <div class="viewcolor" style={{backgroundColor: this.state.config.colorscheme.maintext}} onClick={(e) => {this.chooseColor('maintext')}}></div>
+                            <div class="hexcolor">{this.state.config.colorscheme.maintext} - Main Text</div>
+                        </div>
+                        <div class="color">
+                            <div class="viewcolor" style={{backgroundColor: this.state.config.colorscheme.frametext}} onClick={(e) => {this.chooseColor('frametext')}}></div>
+                            <div class="hexcolor">{this.state.config.colorscheme.frametext} - Frame Text</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }

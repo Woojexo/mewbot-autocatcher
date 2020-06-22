@@ -11,11 +11,11 @@ h1, h2, .swal2-html-container, .swal2-validation-message{
 	font-family: 'caviar_dreamsregular';
 }
 
-.bots .frame .bot .avatar:hover, .servers .frame .server, label:before, .blacklist .frame .pokemon:hover, .whitelist .frame .pokemon:hover{
+.bots .frame .bot .avatar:hover, .servers .frame .server, label:before, .blacklist .frame .pokemon:hover, .whitelist .frame .pokemon:hover, .colorscheme .frame .color .viewcolor:hover{
 	cursor: pointer;
 }
 
-.bots, .servers, .options, .botlogs, .debuglogs, .stats, .whitelist, .blacklist{
+.bots, .servers, .options, .botlogs, .debuglogs, .stats, .whitelist, .blacklist, .colorscheme{
 	width: 31.5vw;
 	height: 25vh;
 	padding: 10px;
@@ -28,7 +28,6 @@ h1, h2, .swal2-html-container, .swal2-validation-message{
 }
 
 .frame{
-	background-color: #36393F;
 	width: 100%;
 	height: 100%;
 	border-radius: 5px;
@@ -42,6 +41,32 @@ h1, h2, .swal2-html-container, .swal2-validation-message{
 	border-radius: 5px;
 }
 
+.colorscheme .frame .color{
+    width: 100%;
+    height: 25%;
+}
+
+.colorscheme .frame .color .viewcolor{
+    position: relative;
+	left: 1%;
+	top: 50%;
+	transform: translateY(-50%);
+	float: left;
+	height: 90%;
+    display: block;
+    width: 54.5px;
+}
+
+.colorscheme .frame .color .hexcolor{
+	font-family: 'caviar_dreamsregular';
+	float: left;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	padding-left: 10px;
+	font-size: 1.8vw;
+}
+
 .bots .frame .bot .avatar{
 	position: relative;
 	left: 1%;
@@ -52,14 +77,13 @@ h1, h2, .swal2-html-container, .swal2-validation-message{
 	display: block;
 }
 
-.bots .frame .bot .avatar img, .servers .frame .server img, .blacklist .frame .pokemon img, .whitelist .frame .pokemon img{
+.bots .frame .bot .avatar img, .servers .frame .server img, .blacklist .frame .pokemon img, .whitelist .frame .pokemon img, .colorscheme .frame .color .viewcolor{
 	max-height: 100%;
 	border-radius: 50%;
 }
 
 .bots .frame .bot .username{
 	font-family: 'caviar_dreamsregular';
-	color: #fff;
 	float: left;
 	position: relative;
 	top: 50%;
@@ -73,7 +97,6 @@ h1, h2, .swal2-html-container, .swal2-validation-message{
 	position: relative;
 	top: 50%;
 	transform: translateY(-50%);
-	color: white;
 	right: 5%;
 	font-size: 2.5vw;
 }
@@ -103,12 +126,10 @@ h1, h2, .swal2-html-container, .swal2-validation-message{
 	left: 50%;
 	transform: translate(-50%, -50%);
 	text-align: center;
-	color: white;
 	font-size: 2vw;
 }
 
 .blacklist .frame .pokemon .name, .whitelist .frame .pokemon .name{
-    color: white;
     font-family: caviar_dreamsregular;
     text-align: center;
 }
@@ -116,12 +137,6 @@ h1, h2, .swal2-html-container, .swal2-validation-message{
 .blacklist .frame .pokemon, .whitelist .frame .pokemon{
     margin: 0px 15px 35px 15px;
     width: 15%;
-}
-
-.options .frame .option{
-    color: white;
-    /* float: left; */
-    /* width:30%; */
 }
 
 input[type=checkbox]{
@@ -145,7 +160,6 @@ input[type=checkbox]:checked + label:before{
 }
 
 .debuglogs .frame .log p, .botlogs .frame .log p{
-    color: white;
     margin: 0px;
     font-family: 'caviar_dreamsregular';
 }
