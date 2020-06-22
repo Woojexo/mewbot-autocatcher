@@ -13,5 +13,11 @@
     "blacklist": [],
     "whitelist": [],
     "authentication": {"username": "", "password": ""},
-    "spaminterval": 5000
+    "spaminterval": 5000,
+    "colorscheme":{
+        "mainbackground":"#ffffff",
+        "framebackground":"#36393F",
+        "maintext":"#000000",
+        "frametext":"#ffffff"
+    }
 }
