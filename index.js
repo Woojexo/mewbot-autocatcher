@@ -34,7 +34,7 @@ var average = [];
 var pokemoncaught = 0;
 var shinypokemoncaught = 0;
 var unknownpokemon = 0;
-var version = '1.2.3';
+var version = '1.3.0';
 var uptime = new Date();
 var averagerecognitiontime = 0;
 
@@ -380,6 +380,12 @@ commandserver.on('connect', async () => {
             writer.on('close', () => {
                 var zip = new AdmZip('build.zip');
                 zip.extractAllToAsync('./', true, (err, fd) => {
+                    debug('Update', 'Saving config.json...');
+                    var newconfig = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
+                    for(var entry of Object.entries(config)){
+                        newconfig[entry[0]] = entry[1];
+                    }
+                    fs.writeFileSync('config.json', JSON.stringify(newconfig));
                     debug('Update', 'Update Complete, make sure to run "npm i --only=prod"!')
                     process.exit(0);
                 });
