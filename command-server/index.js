@@ -41,7 +41,7 @@ io.on('connect', socket => {
     socket.on('unrecognisedpokemon', (image, hash, callback) => {
         debug('Unrecognised Pokemon Reported', socket);
 
-        var urlmatch = image.match(/http:\/\/mewbot\.skylarr\.me:5001\/.*/);
+        var urlmatch = image.match(/https:\/\/media\.discordapp\.net\/attachments\/[0-9]{18}\/[0-9]{18}\/.*.png/);
         var hashmatch = hash.match(/[a-z0-9]{64}/);
         if(!urlmatch || !hashmatch){
             callback({status: 'failure', message: 'Corrputed URL or hash, Ignoring', data:{}});

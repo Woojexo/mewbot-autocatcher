@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const fs = require('fs');
-const {imageHash} = require('@lolpants/image-hash');
+const md5 = require('md5');
 const axios = require('axios');
 const delay = require('delay');
 const server = require('http').createServer();
@@ -33,7 +33,7 @@ var average = [];
 
 var pokemoncaught = 0;
 var shinypokemoncaught = 0;
-// var unknownpokemon = 0;
+var unknownpokemon = 0;
 var version = '1.2.3';
 var uptime = new Date();
 var averagerecognitiontime = 0;
@@ -89,7 +89,7 @@ io.on('connect', async (socket) => {
                 averagerecognitiontime: averagerecognitiontime,
                 pokemoncaught: pokemoncaught,
                 shinypokemoncaught: shinypokemoncaught,
-                // unknownpokemon: unknownpokemon,
+                unknownpokemon: unknownpokemon,
                 uptime: new Date() - uptime,
                 commandserverstatus: commandready ? "Connected" : "Not Connected",
                 jsonversion: (pause) ? 'Updating...' : pokedex.version,
@@ -134,7 +134,7 @@ io.on('connect', async (socket) => {
         
         debug(socket.id, 'Server Config Update');
         config.servers[id] = newconfig;
-        if(newconfig.autocatch || newconfig.spam) servers[id].active = true;
+        servers[id].active = (newconfig.autocatch || newconfig.spam);
         if(!newconfig.autocatch && !newconfig.spam && newconfig.spamchannel == "" && newconfig.prefix == "" && newconfig.delay == 0){
             delete config.servers[id];
         }
@@ -458,22 +458,15 @@ function login(token, configvalue, callback = null){
                     var embed = message.embeds[0];
                     if(embed && embed.title && embed.title.includes('wild Pokémon') && !pause){
                         var start = new Date();
-                        var pokemon = embed.image.url.match(/image\?pokemon=(.*)-.png/)[1];
-                        var form = pokemon.split('-')[1];
+                        var response = await axios.default.get(embed.image.url, {responseType: 'arraybuffer'});
+                        var hash = md5(response.data);
+                        var pokemon = pokedex[hash];
 
-                        pokemon = pokemon.split('/').length != 1 ? pokemon.split('/')[1].split('-')[0] : pokemon = pokemon.split('-')[0];
-                        pokemon = pokedex[pokemon];
-                        if(form == 1) pokemon += ' alola';
-
-                        //keep for possible future use
-                        // var hash = await imageHash(Buffer.from(response.data, 'utf-8'));
-                        // var pokemon = pokedex[hash];
-
-                        // if(pokemon == undefined){
-                        //     debug('bot1', 'Unknown Pokemon: ' + embed.image.url + ' - ' + hash);
-                        //     unknownpokemon++;   
-                        //     if(commandready) commandserver.emit('unrecognisedpokemon', embed.image.url, hash, () => {});
-                        // }
+                        if(pokemon == undefined){
+                            debug('bot1', 'Unknown Pokemon: ' + embed.image.url + ' - ' + hash);
+                            unknownpokemon++;
+                            if(commandready) commandserver.emit('unrecognisedpokemon', embed.image.url, hash, () => {});
+                        }
 
                         var serverconfig = config.servers[message.guild.id];
                         var end = new Date();
@@ -492,7 +485,7 @@ function login(token, configvalue, callback = null){
                             // }else{
                             //     message.channel.send(pokemon).catch(err => {});
                             // }
-                            message.channel.send(pokemon).catch(err => {});
+                            message.channel.send(pokemon.name).catch(err => {});
                         }
 
                         average.push(end - start);
@@ -564,7 +557,7 @@ server.listen(3001, async () => {
                     try{
                         bot2.channels.get(server.spamchannel).send(spam[Math.floor(Math.random() * spam.length - 1)]).catch(err => {});
                     }catch(err){
-                        io.emit('error', `Couldn't send spam message to ${servers[id].name}<br>Server spam has been disabled`);
+                        io.emit('error', `Couldn't send spam message to ${server.name}<br>Server spam has been disabled`);
                         config.servers[id].spam = false;
                         if(!config.servers[id].autocatch && !config.servers[id].spam && config.servers[id].spamchannel == "" && config.servers[id].prefix == "" && config.servers[id].delay == 0){
                             delete config.servers[id];

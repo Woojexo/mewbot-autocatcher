@@ -1,1 +1,1 @@
-1.2.0@https://github.com/RussianWaffles/mewbot-autocatcher/releases/download/v.1.2.0/build.zip
+1.3.0@https://github.com/RussianWaffles/mewbot-autocatcher/releases/download/v.1.3.0/build.zip

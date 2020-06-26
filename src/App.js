@@ -55,7 +55,7 @@ class App extends Component{
             pokemoncaught: 0,
             shinypokemoncaught: 0,
             pinglatency: 0,
-            // unknownpokemon: 0,
+            unknownpokemon: 0,
             uptime: 0,
             commandserverstatus: 'Not Connected',
             jsonversion: '0.0.0',
@@ -103,7 +103,7 @@ class App extends Component{
                 averagerecognitiontime: result.data.averagerecognitiontime,
                 pokemoncaught: result.data.pokemoncaught,
                 shinypokemoncaught: result.data.shinypokemoncaught,
-                // unknownpokemon: result.data.unknownpokemon,
+                unknownpokemon: result.data.unknownpokemon,
                 uptime: uptime,
                 commandserverstatus: result.data.commandserverstatus,
                 jsonversion: result.data.jsonversion,
@@ -262,11 +262,13 @@ class App extends Component{
                 }else{
                     this.websocket.emit('serverconfigupdate', result.value.id, result.value, () => {
                         var updatedservers = this.state.servers;
+                        console.log(result.value);
                         if(result.value.autocatch || result.value.spam){
                             updatedservers[server.id].active = true;
                         }else{
                             updatedservers[server.id].active = false;
                         }
+                        console.log(updatedservers);
                         this.setState({servers: updatedservers});
                         Swal.fire({
                             title: 'Success',
@@ -753,15 +755,15 @@ class App extends Component{
                 <div className="stats">
                     <center><h2 style={{color: this.state.config.colorscheme.maintext}}>Statistics</h2></center>
                     <div className="frame"  style={{color: this.state.config.colorscheme.frametext, fontFamily: 'caviar_dreamsregular', backgroundColor: this.state.config.colorscheme.framebackground}}>
-                        {/* Average Recognition Time: {this.state.averagerecognitiontime + 'ms'} */}
-                        {/* <br/> */}
+                        Average Recognition Time: {this.state.averagerecognitiontime + 'ms'}
+                        <br/>
                         Pokemon Caught: {this.state.pokemoncaught}
                         <br/>
                         Shiny Pokemon Caught: {this.state.shinypokemoncaught}
                         <br/>
+                        Unknown Pokemon: {this.state.unknownpokemon}
+                        <br/>
                         Uptime: {this.state.uptime}
-                        {/* <br/> */}
-                        {/* Unknown Pokemon: {this.state.unknownpokemon} */}
                         <br/>
                         Ping Latency: {this.state.pinglatency + 'ms'}
                         <br/>
