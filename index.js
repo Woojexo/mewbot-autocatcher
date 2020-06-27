@@ -462,7 +462,7 @@ function login(token, configvalue, callback = null){
             if(message.author.id == '519850436899897346'){
                 if(message.embeds.length != 0){
                     var embed = message.embeds[0];
-                    if(embed && embed.title && embed.title.includes('wild Pokémon') && !pause){
+                    if(embed && embed.title && embed.title.match(/([a-zA-Z é,!]*)/g).join('').includes('wild Pokémon') && !pause){
                         var start = new Date();
                         var response = await axios.default.get(embed.image.url, {responseType: 'arraybuffer'});
                         var hash = md5(response.data);
