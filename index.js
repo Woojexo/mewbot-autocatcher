@@ -34,7 +34,7 @@ var average = [];
 var pokemoncaught = 0;
 var shinypokemoncaught = 0;
 var unknownpokemon = 0;
-var version = '1.3.0';
+var version = '1.3.1';
 var uptime = new Date();
 var averagerecognitiontime = 0;
 
